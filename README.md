@@ -11,54 +11,54 @@ Cada requisição deve interagir primeiro com um cache Redis e depois sincroniza
 
 ### Requisitos
 
-1. *API Endpoints*: A aplicação deverá possuir endpoints para:
+1. **API Endpoints**: A aplicação deverá possuir endpoints para:
    - Adicionar saldo à carteira de um usuário.
    - Subtrair saldo da carteira de um usuário.
    
-2. *Parâmetros*: Cada requisição à sua API deve aceitar os seguintes parâmetros:
+2. **Parâmetros**: Cada requisição à sua API deve aceitar os seguintes parâmetros:
    - `userId`: ID do usuário.
    - `balance`: O montante a ser adicionado ou subtraído.
    - `walletName`: Nome da carteira do usuário.
 
-3. *Redis*: Antes de interagir com o banco de dados MySQL, sua aplicação deve verificar e/ou atualizar o cache no Redis.
+3. **Redis**: Antes de interagir com o banco de dados MySQL, sua aplicação deve verificar e/ou atualizar o cache no Redis.
    - Se a informação estiver disponível no Redis, use-a.
    - Ao adicionar ou subtrair do saldo, atualize o cache Redis.
 
-4. *MySQL*: Mantenha o MySQL sincronizado com as operações que acontecem no Redis.
+4. **MySQL**: Mantenha o MySQL sincronizado com as operações que acontecem no Redis.
 
-5. *Concorrência*: Sua aplicação deve ser capaz de lidar com múltiplas requisições simultâneas sem causar inconsistências nos saldos dos usuários.
+5. **Concorrência**: Sua aplicação deve ser capaz de lidar com múltiplas requisições simultâneas sem causar inconsistências nos saldos dos usuários.
 
-6. *Tipos*: Como estamos usando TypeScript, certifique-se de definir e utilizar tipos adequados.
+6. **Tipos**: Como estamos usando TypeScript, certifique-se de definir e utilizar tipos adequados.
 
-7. *Testes*: Escreva testes para sua aplicação para garantir que tudo está funcionando como esperado.
+7. **Testes**: Escreva testes para sua aplicação para garantir que tudo está funcionando como esperado.
 
 ## Exemplos
 
 ### Entrada
 
-*Endpoint para adicionar saldo*:  
+**Endpoint para adicionar saldo**:  
 POST `/api/wallet/add`
 
 Request Body:
-sh
+```sh
 {
   "userId": "12345",
   "balance": 100.50,
   "walletName": "Carteira Principal"
 }
+```
 
-
-*Endpoint para subtrair saldo*:  
+**Endpoint para subtrair saldo**:  
 POST `/api/wallet/subtract`
 
 Request Body:
-sh
+```sh
 {
 "userId": "12345",
 "balance": 50.25,
 "walletName": "Carteira Principal"
 }
-
+```
 
 ### Saída Esperada
 
@@ -67,23 +67,23 @@ Para ambos os endpoints, em caso de sucesso:
 Status Code: `200 OK`
 
 Response Body:
-sh
+```sh
 {
 "message": "Operation successful",
 "updatedBalance": 50.25
 }
-
+```
 
 Em caso de erro (e.g., saldo insuficiente):
 
 Status Code: `400 Bad Request`
 
 Response Body:
-sh
+```sh
 {
 "message": "Insufficient funds"
 }
-
+```
 
 ### Organização do Projeto
 
@@ -105,7 +105,7 @@ Recomendamos a seguinte estrutura de diretórios para sua aplicação:
 
 1. Implemente autenticação JWT para os endpoints.
 2. Implemente um sistema de logging para rastrear as operações.
-3. *Organização e Documentação*: Ganhe pontos extras pela organização de seu código e pela clareza e abrangência de sua documentação.
+3. **Organização e Documentação**: Ganhe pontos extras pela organização de seu código e pela clareza e abrangência de sua documentação.
 
 ## Instruções
 
