@@ -90,15 +90,25 @@ Response Body:
 Recomendamos a seguinte estrutura de diretórios para sua aplicação:
 
 >|-- src/
->| |-- controllers/
->| |-- middlewares/
->| |-- models/
->| |-- routes/
->| |-- utils/
+>
+>>    ||-- controllers/
+>
+>>    ||-- middlewares/
+>
+>>    ||-- models/
+>
+>>    ||-- routes/
+>
+>>    ||-- utils/
+>
 >|-- tests/
+>
 >|-- .env
+>
 >|-- package.json
+>
 >|-- tsconfig.json
+>
 >|-- README.md
 
 ## Bônus
