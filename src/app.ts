@@ -2,9 +2,12 @@ import cors from 'cors';
 import express, { Application } from 'express';
 import { rateLimit } from 'express-rate-limit';
 import { StatusCodes, getReasonPhrase } from 'http-status-codes';
+import { errorHandler } from './middlewares/errorHandler';
 import { fails } from './helpers/response.helper';
 import { corsConfig, limitterConfig } from './config/app';
+import { xssMiddleware } from './middlewares/xss';
 import mainRoute from './routes/main.route';
+import walletRoute from './routes/wallet.route';
 
 /**
  * @description Init express application
@@ -17,8 +20,10 @@ const init = function (): Application {
   app.use(rateLimit(limitterConfig()));
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
+  app.use(xssMiddleware());
 
   app.use('/api', mainRoute);
+  app.use('/api/wallet', walletRoute);
 
   app.use((_, res) => fails(
     res, 
@@ -33,6 +38,8 @@ const init = function (): Application {
       ]
     }
   ));
+
+  app.use(errorHandler);
 
   return app;
 };
