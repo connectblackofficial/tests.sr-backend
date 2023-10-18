@@ -13,7 +13,7 @@ export type TypedRequest<
 >;
 
 export type Sanitized<T> = T extends (...args: unknown[]) => unknown
-  ? T 
+  ? T
   : T extends object
   ? {
       readonly [K in keyof T]: Sanitized<T[K]>;

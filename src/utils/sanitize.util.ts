@@ -9,18 +9,14 @@ import xss from 'xss';
  *
  * @returns A sanitized copy of the provided data with all properties and values set as readonly.
  */
-export const sanitize = <T extends unknown>(
-  data: T,
-  options?: SanitizeOptions
-): Sanitized<T> => {
+// eslint-disable-next-line @typescript-eslint/no-unnecessary-type-constraint
+export const sanitize = <T extends unknown>(data: T, options?: SanitizeOptions): Sanitized<T> => {
   if (!data) {
     return data as unknown as Sanitized<T>;
   }
 
   if (Array.isArray(data)) {
-    const sanitizedArray = data.map((item) =>
-      sanitize(item, options)
-    ) as unknown as Sanitized<T>;
+    const sanitizedArray = data.map((item) => sanitize(item, options)) as unknown as Sanitized<T>;
     return sanitizedArray;
   }
 
