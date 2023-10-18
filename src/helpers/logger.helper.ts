@@ -16,21 +16,21 @@ export const log = (env: string) => {
     defaultMeta: { service: 'wallet-api' },
     transports: [
       new transports.File({ filename: 'logs/error.log', level: 'error' }),
-      new transports.File({ filename: 'logs/status.log' }),
+      new transports.File({ filename: 'logs/status.log' })
     ],
-    exceptionHandlers: [new transports.File({ filename: 'logs/exceptions.log' })],
+    exceptionHandlers: [new transports.File({ filename: 'logs/exceptions.log' })]
   });
 
   if (env !== 'production') {
     outputLog.add(
       new transports.Console({
-        format: format.simple(),
+        format: format.simple()
       })
     );
   }
 
-  return outputLog
-}
+  return outputLog;
+};
 
 const logger = log(NODE_ENV);
 export default logger;

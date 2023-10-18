@@ -26,8 +26,8 @@ export interface HandleResMessageErrorParams extends HandlePayloadParams {
  */
 export const fails = (res: Response, args: HandleResMessageErrorParams) => {
   const { status, errors, payload } = args;
-  logger.info(`fail log`)
-  logger.error(JSON.stringify(args))
+  logger.info('fail log');
+  logger.error(JSON.stringify(args));
   return res.status(status).json({
     success: false,
     errors,
@@ -41,7 +41,7 @@ export const fails = (res: Response, args: HandleResMessageErrorParams) => {
  * @returns {Response} - Express response object
  */
 export const unauthorized = (res: Response) => {
-  logger.info(`unauthorized access`)
+  logger.info('unauthorized access');
   return res.status(StatusCodes.UNAUTHORIZED).json({
     success: false,
     errors: [{ code: getReasonPhrase(StatusCodes.UNAUTHORIZED) }]
@@ -54,7 +54,7 @@ export const unauthorized = (res: Response) => {
  * @returns {Response} - Express response object
  */
 export const forbidden = (res: Response) => {
-  logger.info(`forbidden access`)
+  logger.info('forbidden access');
   return res.status(StatusCodes.FORBIDDEN).json({
     success: false,
     errors: [{ code: getReasonPhrase(StatusCodes.FORBIDDEN) }]
@@ -68,9 +68,9 @@ export const forbidden = (res: Response) => {
  * @returns {Response} - Express response object
  */
 export const succeed = (res: Response, args: HandlePayloadParams) => {
-  logger.info(`succeed response`)
-  logger.info(JSON.stringify(args))
-  
+  logger.info('succeed response');
+  logger.info(JSON.stringify(args));
+
   return res.status(args.status).json({
     success: true,
     ...(args.payload ? { payload: args.payload } : {})
@@ -83,6 +83,6 @@ export const succeed = (res: Response, args: HandlePayloadParams) => {
  * @returns {Response} - Express response object
  */
 export const ok = (res: Response) => {
-  logger.info(`ok response`)
+  logger.info('ok response');
   return succeed(res, { status: StatusCodes.OK });
 };
