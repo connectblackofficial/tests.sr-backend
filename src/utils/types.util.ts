@@ -33,3 +33,15 @@ export type ExpressMiddleware<
   res: Response<Res>,
   next: NextFunction
 ) => Promise<void> | void;
+
+export interface DecodedUser {
+  id: string;
+  email: string;
+  role: string;
+  iat: number;
+  exp: number;
+}
+
+export interface IRequest extends Request {
+  user?: DecodedUser;
+}

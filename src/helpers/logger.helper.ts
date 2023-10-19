@@ -23,7 +23,10 @@ export const log = (env: string) => {
       new transports.File({ filename: 'logs/error.log', level: 'error' }),
       new transports.File({ filename: 'logs/status.log' })
     ],
-    exceptionHandlers: [new transports.File({ filename: 'logs/exceptions.log' })]
+    exceptionHandlers: [
+      new transports.File({ filename: 'logs/exceptions.log' }),
+      new transports.Console({ format: format.simple() })
+    ]
   });
 
   if (env !== 'production') {
