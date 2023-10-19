@@ -150,7 +150,7 @@ class StoreBalance {
     if (isSubtract) {
       const balanceWithReq = currentBalance - (payload.balance * -1);
       
-      if (balanceWithReq <= 0) {
+      if (balanceWithReq < 0) {
         logger.info('StoreBalance::syncPreviewBalance: Insufficient funds');
         throw new Error('Insufficient funds');
       }
