@@ -40,6 +40,8 @@ class StoreBalance {
    * @returns {Promise<void>} A Promise that resolves when the connection is established.
    */
   async connect(): Promise<void> {
+    logger.info('Init StoreBalance::connect');
+
     try {
       this.client = createClient({
         username: 'default',
@@ -67,6 +69,8 @@ class StoreBalance {
    * @returns {string} The generated key.
    */
   getKeyByUser(payload: WalletRequestBody): string {
+    logger.info(`StoreBalance::getKeyByUser: ${JSON.stringify(payload)}`);
+
     const walletNameKey = slugify(payload.walletName);
     return `${walletNameKey}:${payload.userId}`;
   }
@@ -77,10 +81,13 @@ class StoreBalance {
    * @returns {Promise<number | null>} A Promise that resolves to the summary balance or null if not found.
    */
   async getSummaryBalance(payload: WalletRequestBody) {
+    logger.info(`StoreBalance::getSummaryBalance: ${JSON.stringify(payload)}`);
+
     const userKey = `summary:${this.getKeyByUser(payload)}`;
     const isExists = this.client.exists(userKey);
 
     if (!isExists) {
+      logger.info(`StoreBalance::getSummaryBalance: ${userKey} not exists`);
       return null;
     }
 
@@ -93,18 +100,26 @@ class StoreBalance {
    * @returns {Promise<number>} A Promise that resolves to the preview balance.
    */
   async getPreviewBalance(payload: WalletRequestBody): Promise<number> {
+    logger.info(`StoreBalance::getPreviewBalance: ${JSON.stringify(payload)}`);
+
     const userKey = `preview:${this.getKeyByUser(payload)}`;
     const previewList = await this.client.lRange(userKey, 0, -1);
     const summaryBalance = await this.getSummaryBalance(payload);
+
+    logger.info(`StoreBalance::getSummaryBalance: previewList for user ${userKey}`);
+    logger.info(`StoreBalance::getSummaryBalance: previewList ${previewList}`);
 
     const totalPreviewBalance = previewList
       .map(item => JSON.parse(item))
       .reduce((total, item) => item.balance + total, 0);
 
     let total = totalPreviewBalance;
+    logger.info(`StoreBalance::getSummaryBalance: total ${total}`);
 
     if (summaryBalance) {
       total = Number(summaryBalance) + Number(totalPreviewBalance);
+
+      logger.info(`StoreBalance::getSummaryBalance: total ${total} and summaryBalance ${summaryBalance}`);
     }
 
     return Number(total.toFixed(2));
@@ -118,10 +133,16 @@ class StoreBalance {
    * @throws {Error} Throws an error if the balance is insufficient.
    */
   async syncPreviewBalance(payload: WalletRequestBody, isSubtract: boolean): Promise<BalanceResponse> {
+    logger.info(`StoreBalance::syncPreviewBalance: ${JSON.stringify(payload)}`);
+
     const currentBalance = await this.getPreviewBalance(payload);
+
+    logger.info(`StoreBalance::syncPreviewBalance: currentBalance ${currentBalance}`);
+
     const userKey = `preview:${this.getKeyByUser(payload)}`;
 
     if (isSubtract && currentBalance <= 0) {
+      logger.info('StoreBalance::syncPreviewBalance: Insufficient funds');
       throw new Error('Insufficient funds');
     }
 
@@ -131,6 +152,8 @@ class StoreBalance {
     }));
 
     const updatedBalance = await this.getPreviewBalance(payload);
+
+    logger.info(`StoreBalance::syncPreviewBalance: updatedBalance ${updatedBalance}`);
 
     return {
       balance: updatedBalance

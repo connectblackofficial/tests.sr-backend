@@ -4,6 +4,7 @@ import { WalletRequestBody } from '../models/wallet';
 import { TypedRequest } from '../utils/types.util';
 import { REDIS_HOST, REDIS_PORT, REDIS_PASSWORD } from '../config/env';
 import StoreBalance from '../services/store.service';
+import logger from '../helpers/logger.helper';
 
 /**
  * @description Process total of balance
@@ -12,6 +13,8 @@ import StoreBalance from '../services/store.service';
  * @returns {Promise<Response>} - Promise object of Express Response
  */
 async function process(payload: WalletRequestBody, res: Response): Promise<Response> {
+  logger.info(`Process balance: ${JSON.stringify(payload)}`);
+
   try {
     const storeBalance = new StoreBalance({
       host: REDIS_HOST,
@@ -22,12 +25,15 @@ async function process(payload: WalletRequestBody, res: Response): Promise<Respo
   
     const total = await storeBalance.syncPreviewBalance(payload, false);
     
+    logger.error(`Process balance success: Total ${total}`);
+
     return res.status(StatusCodes.BAD_REQUEST).json({
       message: 'Operation successful',
       updatedBalance: total.balance
     });
   } catch (err) {
     const error = err as unknown as Error;
+    logger.error(`Process balance error: ${JSON.stringify(error)}`);
     return res.status(StatusCodes.BAD_REQUEST).json({
       message: error.message
     });
@@ -41,6 +47,8 @@ async function process(payload: WalletRequestBody, res: Response): Promise<Respo
  * @returns {Promise<Response>} - Promise object of Express Response
  */
 async function add(req: TypedRequest<WalletRequestBody>, res: Response): Promise<Response> {
+  logger.info('Init /api/wallet/add');
+
   const { walletName, userId, balance } = req.body;
 
   const payload = {
@@ -59,6 +67,8 @@ async function add(req: TypedRequest<WalletRequestBody>, res: Response): Promise
  * @returns {Promise<Response>} - Promise object of Express Response
  */
 async function subtract(req: Request, res: Response): Promise<Response> {
+  logger.info('Init /api/wallet/subtract');
+
   const { walletName, userId, balance } = req.body;
 
   const payload = {

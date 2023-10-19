@@ -4,8 +4,7 @@ import { fails } from '../helpers/response.helper';
 import { NextFunction, Request, Response } from 'express';
 
 /**
- * Validate that a resource being POSTed or PUT
- * has a valid shape, else return 400 Bad Request
+ * @description Validate that a resource being POSTed or PUT has a valid shape, else return 400 Bad Request
  * @param {*} schema is a yup schema
  */
 export const validateMiddleware =
