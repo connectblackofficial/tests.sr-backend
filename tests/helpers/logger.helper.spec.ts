@@ -7,7 +7,7 @@ describe('Logger Configuration', () => {
 
     expect(productionLogger.level).toBe('info');
     expect(productionLogger.silent).toBeFalsy();
-    expect(productionLogger.transports.length).toBe(3);
+    expect(productionLogger.transports.length).toBe(4);
   });
 
   it('should configure logger for non-production environment', () => {
@@ -15,7 +15,7 @@ describe('Logger Configuration', () => {
 
     expect(developmentLogger.level).toBe('debug');
     expect(developmentLogger.silent).toBeFalsy();
-    expect(developmentLogger.transports.length).toBe(4);
+    expect(developmentLogger.transports.length).toBe(5);
   });
 
   it('should configure silent logger for test environment', () => {

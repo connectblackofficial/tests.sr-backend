@@ -12,7 +12,11 @@ import logger from '../helpers/logger.helper';
  * @param {NextFunction} next - Next express function
  * @returns {Promise<void | Response>} - Promise object of void or Response
  */
-export default async function auth(req: IRequest, res: Response, next: NextFunction): Promise<void | Response> {
+export default async function auth(
+  req: IRequest,
+  res: Response,
+  next: NextFunction
+): Promise<void | Response> {
   try {
     const authHeader = req.headers.authorization;
     const token = authHeader && authHeader.split(' ')[1];
@@ -32,6 +36,7 @@ export default async function auth(req: IRequest, res: Response, next: NextFunct
 
     try {
       await verifyAccessToken(token);
+      /* eslint-disable  @typescript-eslint/no-explicit-any */
       const decoded = getUserPayloadFromAccessToken(token) as any;
       req.user = decoded;
 

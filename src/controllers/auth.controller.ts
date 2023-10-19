@@ -3,7 +3,6 @@ import { StatusCodes, getReasonPhrase } from 'http-status-codes';
 import { generateAccessToken } from '../helpers/jwt.helper';
 import { fails, succeed } from '../helpers/response.helper';
 import { USER_EMAIL, USER_PASSWORD } from '../config/env';
-import logger from '../helpers/logger.helper';
 
 /**
  * @description Login user
@@ -12,50 +11,35 @@ import logger from '../helpers/logger.helper';
  * @returns {Promise<Response>} - Promise object of Express Response
  */
 async function login(req: Request, res: Response): Promise<Response> {
-  try {
-    const { email, password } = req.body;
+  const { email, password } = req.body;
 
-    const isLogin = email === USER_EMAIL && password === USER_PASSWORD;
+  const isLogin = email === USER_EMAIL && password === USER_PASSWORD;
 
-    if (!isLogin) {
-        return fails(res, {
-          status: StatusCodes.BAD_REQUEST,
-          errors: [
-            {
-              code: getReasonPhrase(StatusCodes.BAD_REQUEST),
-              field: 'auth',
-              message: 'Login invalid'
-            }
-          ]
-        });
-    }
-
-    const JWTPayload = { id: 1, email: USER_EMAIL, role: 'manager' };
-    const accessToken = generateAccessToken(JWTPayload, '5h');
-
-    const message = 'Login success';
-    return succeed(res, {
-      status: StatusCodes.OK,
-      payload: {
-        accessToken,
-        message
-      }
-    })
-  } catch (err) {
-    const error = err as unknown as Error;
-    logger.error(`Error in auth: ${login.name} - ${error.message}`);
-
+  if (!isLogin) {
     return fails(res, {
-      status: StatusCodes.INTERNAL_SERVER_ERROR,
+      status: StatusCodes.BAD_REQUEST,
       errors: [
         {
-          code: getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR),
+          code: getReasonPhrase(StatusCodes.BAD_REQUEST),
           field: 'auth',
           message: 'Login invalid'
         }
       ]
     });
   }
+
+  const JWTPayload = { id: 1, email: USER_EMAIL, role: 'manager' };
+  const accessToken = generateAccessToken(JWTPayload, '5h');
+
+  const message = 'Login success';
+
+  return succeed(res, {
+    status: StatusCodes.OK,
+    payload: {
+      accessToken,
+      message
+    }
+  });
 }
 
 export default { login };
