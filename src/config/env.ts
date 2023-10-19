@@ -13,3 +13,8 @@ export const MYSQL_PORT = Number(process.env.MYSQL_PORT);
 export const MYSQL_DATABASE = String(process.env.MYSQL_DATABASE);
 export const MYSQL_USER = String(process.env.MYSQL_USER);
 export const MYSQL_PASSWORD = String(process.env.MYSQL_PASSWORD);
+
+export const ACCESS_TOKEN_SECRET = String(process.env.ACCESS_TOKEN_SECRET);
+
+export const USER_EMAIL = String(process.env.USER_EMAIL);
+export const USER_PASSWORD = String(process.env.USER_PASSWORD);
