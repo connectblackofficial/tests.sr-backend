@@ -146,10 +146,14 @@ class StoreBalance {
     logger.info(`StoreBalance::syncPreviewBalance: currentBalance ${currentBalance}`);
 
     const userKey = `preview:${this.getKeyByUser(payload)}`;
-
-    if (isSubtract && currentBalance <= 0) {
-      logger.info('StoreBalance::syncPreviewBalance: Insufficient funds');
-      throw new Error('Insufficient funds');
+    
+    if (isSubtract) {
+      const balanceWithReq = currentBalance - (payload.balance * -1);
+      
+      if (balanceWithReq <= 0) {
+        logger.info('StoreBalance::syncPreviewBalance: Insufficient funds');
+        throw new Error('Insufficient funds');
+      }
     }
 
     await this.client.lPush(
