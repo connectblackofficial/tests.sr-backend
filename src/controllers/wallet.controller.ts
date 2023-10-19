@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import { WalletRequestBody } from '../models/wallet';
 import { TypedRequest } from '../utils/types.util';
@@ -66,7 +66,7 @@ async function add(req: TypedRequest<WalletRequestBody>, res: Response): Promise
  * @param {Response} res - Express Response object
  * @returns {Promise<Response>} - Promise object of Express Response
  */
-async function subtract(req: Request, res: Response): Promise<Response> {
+async function subtract(req: TypedRequest<WalletRequestBody>, res: Response): Promise<Response> {
   logger.info('Init /api/wallet/subtract');
 
   const { walletName, userId, balance } = req.body;
@@ -74,7 +74,7 @@ async function subtract(req: Request, res: Response): Promise<Response> {
   const payload = {
     walletName,
     userId,
-    balance: balance * -1
+    balance: Number(balance) * -1
   } as WalletRequestBody;
 
   return await process(payload, res);
