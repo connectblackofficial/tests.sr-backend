@@ -2,6 +2,7 @@ import { createClient } from 'redis';
 import slugify from 'slugify';
 import { WalletRequestBody } from '../models/wallet';
 import logger from '../helpers/logger.helper';
+import SyncBalance from './sync.service';
 
 /**
  * Configuration for connecting to Redis.
@@ -17,7 +18,7 @@ type ConnectConfig = {
  */
 type BalanceResponse = {
   balance: number;
-}
+};
 
 /**
  * Class to store and manage wallet balances in Redis.
@@ -110,7 +111,7 @@ class StoreBalance {
     logger.info(`StoreBalance::getSummaryBalance: previewList ${previewList}`);
 
     const totalPreviewBalance = previewList
-      .map(item => JSON.parse(item))
+      .map((item) => JSON.parse(item))
       .reduce((total, item) => item.balance + total, 0);
 
     let total = totalPreviewBalance;
@@ -119,7 +120,9 @@ class StoreBalance {
     if (summaryBalance) {
       total = Number(summaryBalance) + Number(totalPreviewBalance);
 
-      logger.info(`StoreBalance::getSummaryBalance: total ${total} and summaryBalance ${summaryBalance}`);
+      logger.info(
+        `StoreBalance::getSummaryBalance: total ${total} and summaryBalance ${summaryBalance}`
+      );
     }
 
     return Number(total.toFixed(2));
@@ -132,7 +135,10 @@ class StoreBalance {
    * @returns {Promise<BalanceResponse>} A Promise that resolves to the updated balance response.
    * @throws {Error} Throws an error if the balance is insufficient.
    */
-  async syncPreviewBalance(payload: WalletRequestBody, isSubtract: boolean): Promise<BalanceResponse> {
+  async syncPreviewBalance(
+    payload: WalletRequestBody,
+    isSubtract: boolean
+  ): Promise<BalanceResponse> {
     logger.info(`StoreBalance::syncPreviewBalance: ${JSON.stringify(payload)}`);
 
     const currentBalance = await this.getPreviewBalance(payload);
@@ -146,10 +152,13 @@ class StoreBalance {
       throw new Error('Insufficient funds');
     }
 
-    await this.client.lPush(userKey, JSON.stringify({
-      ...payload,
-      timestamp: Date.now()
-    }));
+    await this.client.lPush(
+      userKey,
+      JSON.stringify({
+        ...payload,
+        timestamp: Date.now()
+      })
+    );
 
     const updatedBalance = await this.getPreviewBalance(payload);
 
@@ -158,6 +167,52 @@ class StoreBalance {
     return {
       balance: updatedBalance
     };
+  }
+
+  async syncPreviewBalanceToDatabase(rows: number): Promise<void> {
+    const syncBalanceService = new SyncBalance();
+    const items: string[] = await this.client.sendCommand(['keys', '*preview*']);
+    const keys = items.slice(0, rows);
+
+    if (keys.length > 0) {
+      for (const k in keys) {
+        const reference = keys[k].slice().replace('preview:', '');
+
+        // get the history
+        const historyList = await this.client.lRange(keys[k], 0, -1);
+
+        // recreates with new status for guarantee
+        await this.client.lPush(`processing:${reference}`, historyList);
+
+        // remove to avoid generating duplication
+        await this.client.del(keys[k]);
+
+        // parser to save in database
+        const history = historyList.map((item) => {
+          const parsedItem = JSON.parse(item);
+
+          return {
+            balance: parsedItem.balance,
+            userId: parsedItem.userId,
+            walletName: parsedItem.walletName,
+            reference: reference,
+            createdAt: new Date(parsedItem.timestamp),
+            syncedAt: new Date()
+          };
+        });
+
+        // save in database
+        const currentBalance = await syncBalanceService.process(history, reference);
+
+        if (currentBalance) {
+          // remove history
+          await this.client.del(`processing:${reference}`);
+
+          // save summary balance
+          await this.client.set(`summary:${reference}`, currentBalance);
+        }
+      }
+    }
   }
 }
 
