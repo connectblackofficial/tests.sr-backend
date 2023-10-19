@@ -1,9 +1,10 @@
 import express, { Router } from 'express';
+import asyncify from 'express-asyncify';
 import WalletController from '../controllers/wallet.controller';
 import { validateMiddleware } from '../middlewares/validate';
 import { walletRequestSchema } from '../models/wallet';
 
-const router: Router = express.Router();
+const router: Router = asyncify(express.Router());
 
 /**
  * @method POST

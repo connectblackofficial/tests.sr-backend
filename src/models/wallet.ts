@@ -4,6 +4,7 @@ export interface WalletRequestBody {
   userId: string;
   balance: number;
   walletName: string;
+  timestamp?: string;
 }
 
 export const walletRequestSchema = yup.object({
