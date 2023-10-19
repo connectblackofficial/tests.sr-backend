@@ -3,6 +3,11 @@ import type { ParsedQs } from 'qs';
 import { sanitize } from '../utils/sanitize.util';
 import type { ExpressMiddleware, SanitizeOptions } from '../utils/types.util';
 
+/**
+ * @description prevent Xss atack
+ * @param {SanitizeOptions} options - options for sanitize
+ * @returns {ExpressMiddleware} - Express middleware
+ */
 export const xssMiddleware = (options?: SanitizeOptions): ExpressMiddleware => {
   return (req, _res, next) => {
     req.body = sanitize(req.body, options);

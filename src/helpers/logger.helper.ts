@@ -1,6 +1,11 @@
 import { NODE_ENV } from '../config/env';
 import { createLogger, format, transports } from 'winston';
 
+/**
+ * @description log of application
+ * @param {string} env - current envitonment
+ * @returns {winston.Logger} - Winston object
+ */
 export const log = (env: string) => {
   const outputLog = createLogger({
     level: env === 'production' ? 'info' : 'debug',
@@ -32,5 +37,11 @@ export const log = (env: string) => {
   return outputLog;
 };
 
+/**
+ * @description method for log
+ * @param {string} env - current envitonment
+ * @returns {winston.Logger} - Winston object
+ */
 const logger = log(NODE_ENV);
+
 export default logger;
