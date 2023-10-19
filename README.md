@@ -31,6 +31,7 @@ Siga estas etapas para instalar e configurar o projeto "wallet-test":
    ```bash
    docker-compose --env-file .env.local up
    ```
+4. Pronto! Pode utilizar de acordo com a seção abaixo.
 
 ## Como utilizar a aplicação
 
