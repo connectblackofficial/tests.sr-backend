@@ -9,14 +9,14 @@ const router: Router = asyncify(express.Router());
 /**
  * @method POST
  * @access private
- * @endpoint /api
+ * @endpoint /api/wallet/add
  */
 router.post('/add', validateMiddleware(walletRequestSchema), WalletController.add);
 
 /**
  * @method POST
  * @access private
- * @endpoint /api
+ * @endpoint /api/wallet/subtract
  */
 router.post('/subtract', validateMiddleware(walletRequestSchema), WalletController.subtract);
 

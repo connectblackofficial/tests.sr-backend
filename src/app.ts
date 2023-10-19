@@ -7,7 +7,9 @@ import { fails } from './helpers/response.helper';
 import { corsConfig, limitterConfig } from './config/app';
 import { xssMiddleware } from './middlewares/xss';
 import mainRoute from './routes/main.route';
+import authRoute from './routes/auth.route';
 import walletRoute from './routes/wallet.route';
+import auth from './middlewares/auth';
 
 /**
  * @description Init express application
@@ -23,7 +25,8 @@ const init = function (): Application {
   app.use(xssMiddleware());
 
   app.use('/api', mainRoute);
-  app.use('/api/wallet', walletRoute);
+  app.use('/api/auth', authRoute);
+  app.use('/api/wallet', auth, walletRoute);
 
   app.use((_, res) => fails(
     res, 
