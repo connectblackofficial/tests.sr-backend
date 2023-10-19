@@ -10,9 +10,14 @@ import logger from '../helpers/logger.helper';
  * @description Process total of balance
  * @param {WalletRequestBody} payload - Express Request object
  * @param {Response} res - Express Response object
+ * @param {boolean} isSubtract - check is subtract
  * @returns {Promise<Response>} - Promise object of Express Response
  */
-async function process(payload: WalletRequestBody, res: Response): Promise<Response> {
+async function process(
+  payload: WalletRequestBody,
+  res: Response,
+  isSubtract: boolean
+): Promise<Response> {
   logger.info(`Process balance: ${JSON.stringify(payload)}`);
 
   try {
@@ -22,10 +27,10 @@ async function process(payload: WalletRequestBody, res: Response): Promise<Respo
       password: REDIS_PASSWORD
     });
     storeBalance.connect();
-  
-    const total = await storeBalance.syncPreviewBalance(payload, false);
-    
-    logger.error(`Process balance success: Total ${total}`);
+
+    const total = await storeBalance.syncPreviewBalance(payload, isSubtract);
+
+    logger.error(`Process balance success: Total ${total.balance}`);
 
     return res.status(StatusCodes.BAD_REQUEST).json({
       message: 'Operation successful',
@@ -57,7 +62,7 @@ async function add(req: TypedRequest<WalletRequestBody>, res: Response): Promise
     balance
   } as WalletRequestBody;
 
-  return await process(payload, res);
+  return await process(payload, res, false);
 }
 
 /**
@@ -77,7 +82,7 @@ async function subtract(req: TypedRequest<WalletRequestBody>, res: Response): Pr
     balance: Number(balance) * -1
   } as WalletRequestBody;
 
-  return await process(payload, res);
+  return await process(payload, res, true);
 }
 
 export default { add, subtract };
