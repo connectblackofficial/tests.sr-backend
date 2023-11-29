@@ -1,0 +1,20 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Wallet {
+  name String
+  userId String
+  ballance Float
+
+  // name and userId shoud be unique
+  @@unique([name, userId])
+
+  // table name
+  @@map("wallets")
+}

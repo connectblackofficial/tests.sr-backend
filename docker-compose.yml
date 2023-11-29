@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  redis:
+    image: 'redis:latest'
+    ports:
+      - '6379:6379'
+    networks:
+      - wallet-poc-network
+    healthcheck:
+      test: ['CMD-SHELL', 'redis-cli ping | grep PONG']
+      interval: 1m30s
+      timeout: 30s
+      retries: 5
+      start_period: 30s
+
+  mysql:
+    platform: linux/x86_64
+    image: mysql:5.7
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: '12345'
+      MYSQL_DATABASE: wallet-poc
+    ports:
+      - '3306:3306'
+    networks:
+      - wallet-poc-network
+
+  wallet-poc-app:
+    build: .
+    ports:
+      - '3000:3000'
+    command: npm run start:dev
+    volumes:
+      - '.:/usr/app'
+      - '/usr/app/node_modules'
+    restart: always
+    depends_on:
+      - redis
+      - mysql
+    networks:
+      - wallet-poc-network
+networks:
+  wallet-poc-network:
+    driver: bridge
