@@ -34,6 +34,9 @@ export default class WalletController {
   public async getAllWallets(_req: Request, res: Response) {
     const cacheKey = "wallet:all";
     const cachedWallets = await redis.get(cacheKey);
+
+    console.log(cachedWallets)
+  
     if (cachedWallets) return res.json(JSON.parse(cachedWallets));
 
     const wallets = await this.walletService.getAll();
@@ -63,7 +66,7 @@ export default class WalletController {
     const checkingIdInCache = await this.getDataFromCache(id);
 
     if (checkingIdInCache !== null) {
-      res.status(200).json(checkingIdInCache);
+      return res.status(200).json(checkingIdInCache);
     }
 
     const walletId = await this.walletService.getById(Number(id));

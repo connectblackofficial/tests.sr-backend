@@ -27,10 +27,11 @@ Micro-application for handling a large number of requests, using Node, TypeScrip
 4. Install dependencies:
    ```bash
    npm install
-5. Go back to the project's root:
+5. Use the environment variables model in .env.exemple to configure the connection to redis
+6. Go back to the project's root:
    ```bash
    cd ..
-6. Start the containers for the backend, redis, and database:
+7. Start the containers for the backend, redis, and database:
    ```bash
    docker-compose up -d --build
 
